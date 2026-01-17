@@ -49,6 +49,7 @@ Phase 5: デプロイ
 | mini-app-status | 進捗管理 | status.md |
 | setup-github | GitHub CLIセットアップ | gh認証完了 |
 | setup-vercel | Vercel CLIセットアップ | vercel認証完了 |
+| web-research | Web検索による情報検証 | 検索結果サマリー |
 
 ## 3. 品質ゴール
 
@@ -96,6 +97,7 @@ patterns:
 | 進捗、ステータス、状況確認 | mini-app-status |
 | GitHub設定、gh設定、GitHubセットアップ | setup-github |
 | Vercel設定、vercel設定、Vercelセットアップ | setup-vercel |
+| 調べて、検索して、確認して、最新情報 | web-research |
 
 ## 6. 技術制約
 
