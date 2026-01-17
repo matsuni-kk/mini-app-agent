@@ -50,6 +50,7 @@ Phase 5: デプロイ
 | setup-github | GitHub CLIセットアップ | gh認証完了 |
 | setup-vercel | Vercel CLIセットアップ | vercel認証完了 |
 | web-research | Web検索による情報検証 | 検索結果サマリー |
+| core-rule-maintenance | CLAUDE.md/AGENTS.md保守 | 更新済みCLAUDE.md |
 
 ## 3. 品質ゴール
 
