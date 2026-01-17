@@ -10,43 +10,45 @@
 ### リポジトリ
 - リポジトリ名: {{repo_name}}
 - URL: https://github.com/{{username}}/{{repo_name}}
-- 公開設定: Public / Private
+- 公開設定: Private
 
-### GitHub Pages
-- 公開URL: https://{{username}}.github.io/{{repo_name}}/
-- ソースブランチ: main
-- ソースディレクトリ: / (root)
+### Vercel
+- 公開URL: https://{{project_name}}.vercel.app
+- プロジェクト名: {{project_name}}
+- 環境: Production
 
 ## 2. デプロイ手順
 
 ### 実行コマンド
 
 ```bash
-# リポジトリ作成
-gh repo create {{repo_name}} --public --source=. --remote=origin
+# GitHubリポジトリ作成（プライベート）
+gh repo create {{repo_name}} --private --source=. --remote=origin --push
 
-# または既存リポジトリにpush
+# Vercelデプロイ
+cd app/{{app_name}}
+vercel --prod
+```
+
+### または既存リポジトリにpush後、Vercel連携
+
+```bash
 git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/{{username}}/{{repo_name}}.git
-git push -u origin main
-```
+gh repo create {{repo_name}} --private --source=. --remote=origin --push
 
-### GitHub Pages設定
-1. Settings → Pages
-2. Source: Deploy from a branch
-3. Branch: main, / (root)
-4. Save
+# Vercelダッシュボードからインポート or CLI
+vercel --prod
+```
 
 ## 3. 確認結果
 
 ### デプロイステータス
 - [ ] リポジトリ作成: 成功/失敗
 - [ ] コードpush: 成功/失敗
-- [ ] GitHub Pages設定: 成功/失敗
-- [ ] Actions完了: 成功/失敗
+- [ ] Vercelデプロイ: 成功/失敗
 
 ### 動作確認
 - [ ] 公開URLアクセス: 成功/失敗
@@ -63,7 +65,7 @@ git push -u origin main
 ## 5. 次のステップ
 
 - [ ] ユーザーへの報告
-- [ ] ドメイン設定（カスタムドメインの場合）
+- [ ] カスタムドメイン設定（必要な場合）
 - [ ] アクセス解析設定（必要な場合）
 
 ## 変更履歴

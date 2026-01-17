@@ -6,9 +6,9 @@
 
 | 項目 | 基準 | 重要度 |
 |------|------|--------|
-| リポジトリ作成 | GitHubリポジトリが作成されている | Critical |
+| リポジトリ作成 | GitHubプライベートリポジトリが作成されている | Critical |
 | コードpush | 全ソースコードがpushされている | Critical |
-| Pages設定 | GitHub Pagesが有効化されている | Critical |
+| Vercelデプロイ | Vercelでデプロイが成功している | Critical |
 | 公開URL動作 | 公開URLでアプリが正常動作する | Critical |
 | deploy_log作成 | デプロイログが記録されている | High |
 
@@ -19,7 +19,7 @@
 | 完全性 | 全ファイルがデプロイされ、機能が動作する | 30 |
 | 動作確認 | 公開URLで全Must機能がテスト時と同様に動作する | 30 |
 | ドキュメント | deploy_log.md, README.mdが適切に更新されている | 20 |
-| セキュリティ | 機密情報が含まれていない、HTTPS有効 | 20 |
+| セキュリティ | 機密情報が含まれていない、HTTPS有効、リポジトリがPrivate | 20 |
 
 ### 許容例外
 
@@ -39,9 +39,9 @@
 スコア: [XX]/100
 
 #### 構造チェック
-- [ ] リポジトリ作成: [Pass/Fail]
+- [ ] リポジトリ作成（Private）: [Pass/Fail]
 - [ ] コードpush: [Pass/Fail]
-- [ ] Pages設定: [Pass/Fail]
+- [ ] Vercelデプロイ: [Pass/Fail]
 - [ ] 公開URL動作: [Pass/Fail]
 - [ ] deploy_log作成: [Pass/Fail]
 

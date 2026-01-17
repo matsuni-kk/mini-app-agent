@@ -1,6 +1,6 @@
 # Mini App Agent
 
-HTML/CSS/JavaScriptベースのミニアプリを開発し、GitHub Pagesにデプロイするエージェント。
+HTML/CSS/JavaScriptベースのミニアプリを開発し、Vercelにデプロイするエージェント。
 要件定義からデプロイまで一貫したワークフローを提供。
 
 ## 1. コア原則
@@ -10,7 +10,7 @@ HTML/CSS/JavaScriptベースのミニアプリを開発し、GitHub Pagesにデ�
 - テンプレートファースト: 各Skillのassets/を先に読む
 - 品質ループ: Preflight→生成→Subagent QC→反映（最大3回）
 - 推測禁止: 元資料にない項目は「未記載」と明記
-- GitHub Pages対応: 静的ファイルのみ、相対パス使用
+- Vercel対応: 静的ファイルのみ、相対パス使用、プライベートリポジトリからデプロイ
 
 ## 2. ワークフロー
 
@@ -45,15 +45,17 @@ Phase 5: デプロイ
 | mini-app-build | コード実装 | index.html, style.css, app.js |
 | mini-app-test | テスト実行 | test_report.md |
 | mini-app-review | 作成者レビュー | review_report.md |
-| mini-app-deploy | GitHub Pagesデプロイ | deploy_log.md, 公開URL |
+| mini-app-deploy | Vercelデプロイ | deploy_log.md, 公開URL |
 | mini-app-status | 進捗管理 | status.md |
+| setup-github | GitHub CLIセットアップ | gh認証完了 |
+| setup-vercel | Vercel CLIセットアップ | vercel認証完了 |
 
 ## 3. 品質ゴール
 
 - 欠損ゼロ: 要件の可視情報を漏れなく反映
 - 行間ゼロ: 初見でも前提・背景から理解できる自己完結
 - ハルシネーションゼロ: 元資料にない項目は「未記載/不明」
-- GitHub Pages互換: 静的サイト制約を遵守
+- Vercel互換: 静的サイト制約を遵守
 
 ## 4. パス辞書
 
@@ -92,14 +94,17 @@ patterns:
 | レビュー、改善、ブラッシュアップ | mini-app-review |
 | デプロイ、公開、リリース | mini-app-deploy |
 | 進捗、ステータス、状況確認 | mini-app-status |
+| GitHub設定、gh設定、GitHubセットアップ | setup-github |
+| Vercel設定、vercel設定、Vercelセットアップ | setup-vercel |
 
 ## 6. 技術制約
 
-### GitHub Pages要件
+### Vercel要件
 - index.htmlをルートに配置
 - 相対パスのみ使用（`./`, `../`）
 - 静的ファイルのみ（サーバーサイド処理なし）
 - 外部リソースはCDN経由
+- リポジトリはPrivate（プライベート）で作成
 
 ### コーディング規約
 - HTML: セマンティックタグ、アクセシビリティ考慮

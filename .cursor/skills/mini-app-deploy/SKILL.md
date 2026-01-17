@@ -1,11 +1,11 @@
 ---
 name: mini-app-deploy
-description: "ミニアプリをGitHub Pagesにデプロイする。「デプロイ」「公開」「リリース」を依頼されたときに使用する。"
+description: "ミニアプリをVercelにデプロイする。「デプロイ」「公開」「リリース」を依頼されたときに使用する。"
 ---
 
 # Mini App Deploy Workflow
 
-ミニアプリをGitHub Pagesにデプロイする。主成果物はデプロイ完了URL・deploy_log.md。
+ミニアプリをVercelにデプロイする。主成果物はデプロイ完了URL・deploy_log.md。
 
 ## Instructions
 
@@ -16,15 +16,15 @@ description: "ミニアプリをGitHub Pagesにデプロイする。「デプロ
   - ソースコード一式（index.html, css/, js/）が揃っていることを確認する。
   - これらを完了するまでデプロイを開始しない。
 - `./assets/deploy_checklist.md` を先に読み、デプロイ前の確認項目を把握する（テンプレートファースト）。
-- `./assets/github_pages_guide.md` でGitHub Pagesのデプロイ手順を確認する。
+- `./assets/vercel_guide.md` でVercelのデプロイ手順を確認する。
 
 ### 2. 生成
 - `./questions/deploy_questions.md` を使ってデプロイ設定を確認する。
 - 以下を実行する:
-  1. GitHubリポジトリ作成（`gh repo create {{app_name}} --public`）
+  1. GitHubリポジトリ作成（`gh repo create {{app_name}} --private`）※プライベートリポジトリ
   2. ソースコードをコミット・プッシュ
-  3. GitHub Pages設定（Settings → Pages → main branch）
-  4. デプロイ完了確認（Actions確認）
+  3. Vercel CLIでデプロイ（`vercel --prod`）
+  4. デプロイ完了確認
   5. 公開URLの動作確認
 - `./assets/deploy_template.md` に従いdeploy_log.mdを作成する。
 - README.mdにデプロイ情報を追記する。
@@ -55,7 +55,7 @@ recommended_subagents:
 - questions: ./questions/deploy_questions.md
 - assets: ./assets/deploy_checklist.md
 - assets: ./assets/deploy_template.md
-- assets: ./assets/github_pages_guide.md
+- assets: ./assets/vercel_guide.md
 - evaluation: ./evaluation/evaluation_criteria.md
 - triggers: ./triggers/next_action_triggers.md
 

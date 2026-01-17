@@ -15,16 +15,18 @@
 - [ ] 全てのパスが相対パスである
 - [ ] 外部リソースはCDN経由またはローカルに存在する
 
-### GitHub確認
+### 環境確認
 - [ ] GitHubアカウントにログイン済み
 - [ ] gh CLIが認証済み（`gh auth status`）
+- [ ] Vercel CLIがインストール済み（`vercel --version`）
+- [ ] Vercel CLIが認証済み（`vercel whoami`）
 - [ ] リポジトリ名が決定している
 
 ## Phase 2: デプロイ実行
 
 ### リポジトリ作成
-- [ ] `gh repo create` でリポジトリ作成
-- [ ] 公開設定（public/private）を確認
+- [ ] `gh repo create` でプライベートリポジトリ作成
+- [ ] 公開設定がPrivateであることを確認
 
 ### コード push
 - [ ] `git init` でローカルリポジトリ初期化
@@ -32,17 +34,16 @@
 - [ ] `git commit` で初回コミット
 - [ ] `git push` でリモートにpush
 
-### GitHub Pages設定
-- [ ] Settings → Pages に移動
-- [ ] Source: Deploy from a branch
-- [ ] Branch: main, /(root) を選択
-- [ ] Save をクリック
+### Vercelデプロイ
+- [ ] `vercel` で初回デプロイ（プレビュー）
+- [ ] `vercel --prod` で本番デプロイ
+- [ ] プロジェクト設定を確認
 
 ## Phase 3: デプロイ後確認
 
 ### 動作確認
-- [ ] GitHub Actions のデプロイが成功
-- [ ] 公開URL（https://{{username}}.github.io/{{repo}}）にアクセス可能
+- [ ] Vercelダッシュボードでデプロイ成功を確認
+- [ ] 公開URL（https://{{project}}.vercel.app）にアクセス可能
 - [ ] 全Must機能が本番環境で動作する
 - [ ] レスポンシブ表示が正常
 
