@@ -84,22 +84,7 @@ patterns:
   app_js: "app/{app_name}/js/app.js"
 ```
 
-## 5. トリガーキーワード
-
-| キーワード | 実行Skill |
-|-----------|-----------|
-| 要件定義、ミニアプリ作成、アプリ開発 | mini-app-requirements |
-| デザイン、画面設計、UI設計 | mini-app-design |
-| 実装、コーディング、ビルド | mini-app-build |
-| テスト、動作確認、検証 | mini-app-test |
-| レビュー、改善、ブラッシュアップ | mini-app-review |
-| デプロイ、公開、リリース | mini-app-deploy |
-| 進捗、ステータス、状況確認 | mini-app-status |
-| GitHub設定、gh設定、GitHubセットアップ | setup-github |
-| Vercel設定、vercel設定、Vercelセットアップ | setup-vercel |
-| 調べて、検索して、確認して、最新情報 | web-research |
-
-## 6. 技術制約
+## 5. 技術制約
 
 ### Vercel要件
 - index.htmlをルートに配置
@@ -113,12 +98,12 @@ patterns:
 - CSS: BEM命名、モバイルファースト、CSS変数
 - JS: ES6+、エラーハンドリング必須
 
-## 7. QC
+## 6. QC
 
 全SkillでQC Subagent（`qa-mini-app-qc`）による品質チェックを実施。
 評価基準は各Skillの `evaluation/evaluation_criteria.md` に定義。
 
-## 8. 進捗管理
+## 7. 進捗管理
 
 ### 自動ステータス更新
 **各Skill完了時、次Skillへ進む前にstatus-updaterサブエージェントを呼び出す。**
