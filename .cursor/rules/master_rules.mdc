@@ -11,34 +11,30 @@ HTML/CSS/JavaScriptベースのミニアプリを開発し、Vercelにデプロ�
 ## 1. コア原則
 
 - 起点Skill確定: ユーザー指定を優先（未指定/曖昧なら質問して確定）
-- WF自動継続: Skill完了後は各Skillの `triggers/next_action_triggers.md` に従い、条件を満たす次Skillを自動実行する
+- WF自動継続: Skill完了後は各Skillの `triggers/next_action_triggers.md` に従い次Skillを自動実行
 - テンプレートファースト: 各Skillのassets/を先に読む
 - 品質ループ: Preflight→生成→Subagent QC→反映（最大3回）
 - 推測禁止: 元資料にない項目は「未記載」と明記
-- Vercel対応: 静的ファイルのみ、相対パス使用、プライベートリポジトリからデプロイ
+- Vercel対応: 静的ファイルのみ、相対パス使用、プライベートリポジトリ
+- フェーズゲート遵守: 前フェーズの成果物存在 && QC Passなしに次フェーズ開始禁止
+- 勝手なファイル作成禁止: 途中経過ファイルや不要ファイルを作成しない
+- デプロイはユーザー指示必須: ユーザーの明示的な指示なしにデプロイしない
+- CLI認証確認必須: デプロイ前に `gh auth status` && `vercel whoami` で認証確認、未認証ならセットアップSkillを案内
 
 ## 2. ワークフロー
 
+### フェーズゲート
+
 ```
-Phase 1: 準備
-  mini-app-requirements → mini-app-design
-
-Phase 2: 実装
-  mini-app-build
-
-Phase 3: 検証
-  mini-app-test
-      ↓ Pass → Phase 4
-      ↓ Fail → mini-app-build（修正）
-
-Phase 4: レビュー
-  mini-app-review
-      ↓ 改善なし/スキップ → Phase 5
-      ↓ 改善あり → mini-app-build → mini-app-test → mini-app-review
-
-Phase 5: デプロイ
-  mini-app-deploy
-      ↓ 完了 → 公開URL報告
+Phase 1: mini-app-requirements → requirements.md（QC Pass）
+Phase 2: mini-app-design → design.md（QC Pass）
+Phase 3: mini-app-build → index.html, css/, js/（QC Pass）
+Phase 4: mini-app-test → test_report.md（全Must Pass、Critical 0件）
+         Fail → mini-app-build → 再テスト
+Phase 5: mini-app-review → review_report.md（ユーザー承認）
+         改善あり → mini-app-build → mini-app-test → mini-app-review
+Phase 6: mini-app-deploy → deploy_log.md, 公開URL
+         前提: ユーザー指示 && CLI認証済み
 ```
 
 ### Skills一覧
