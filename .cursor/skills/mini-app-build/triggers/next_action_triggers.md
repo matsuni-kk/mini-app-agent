@@ -10,8 +10,11 @@
 ```
 Task tool:
   subagent_type: status-updater
-  prompt: "mini-app-buildが完了しました。status.mdを更新してください。"
+  prompt: "mini-app-buildが完了しました。status.mdを更新してください。
+           app_name: {{app_name}}"
 ```
+
+**注意**: app_name は必須パラメータ。アプリごとにステータスを管理する。
 
 ## 起動条件テーブル
 

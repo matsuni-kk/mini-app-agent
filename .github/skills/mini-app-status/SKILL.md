@@ -5,15 +5,21 @@ description: "アプリ開発の進捗状況を確認・更新する。「進捗
 
 # Mini App Status Workflow
 
-アプリ開発の進捗状況を一覧化し、status.mdを生成・更新する。主成果物はstatus.md（各フェーズの完了状況・成果物一覧・次のアクション）。
+**アプリごと**の進捗状況を一覧化し、`app/{app_name}/status.md`を生成・更新する。
+主成果物はstatus.md（各フェーズの完了状況・成果物一覧・次のアクション）。
 
 **重要**: このスキルは各Skill完了時にサブエージェント（status-updater）として自動実行される。
 
 ## Instructions
 
+### 0. app_name の確定
+- ユーザーから app_name が指定されていない場合、`app/` 配下のディレクトリを確認する。
+- 複数アプリが存在する場合は、対象アプリを確認する。
+- app_name は以降のすべてのパスで `{app_name}` として使用する。
+
 ### 1. Preflight（事前確認）
-- Flow/配下の全ドキュメントを確認する。
-- app/配下のソースコードの存在を確認する。
+- `app/{app_name}/docs/` 配下の全ドキュメントを確認する。
+- `app/{app_name}/` 配下のソースコードの存在を確認する。
 - GitHubリポジトリの状態を確認する（存在する場合）。
 - `./assets/status_template.md` を先に読み、ステータスレポートの構造を確認する。
 
@@ -24,12 +30,12 @@ description: "アプリ開発の進捗状況を確認・更新する。「進捗
 
 | フェーズ | 完了条件 |
 |----------|----------|
-| 要件定義 | Flow/requirements.md が存在 |
-| 設計 | Flow/design.md が存在 |
-| 実装 | app/{app_name}/index.html が存在 |
-| テスト | Flow/test_report.md が存在かつ判定Pass |
-| レビュー | Flow/review_report.md が存在 |
-| デプロイ | Flow/deploy_log.md が存在かつ公開URL記載 |
+| 要件定義 | `app/{app_name}/docs/requirements.md` が存在 |
+| 設計 | `app/{app_name}/docs/design.md` が存在 |
+| 実装 | `app/{app_name}/index.html` が存在 |
+| テスト | `app/{app_name}/docs/test_report.md` が存在かつ判定Pass |
+| レビュー | `app/{app_name}/docs/review_report.md` が存在 |
+| デプロイ | `app/{app_name}/docs/deploy_log.md` が存在かつ公開URL記載 |
 
 #### 進捗率の計算
 ```
@@ -37,7 +43,7 @@ description: "アプリ開発の進捗状況を確認・更新する。「進捗
 ```
 
 ### 3. status.md生成・更新
-- Flow/status.mdを生成または更新する。
+- `app/{app_name}/status.md` を生成または更新する。
 - 各フェーズのステータス、成果物一覧、次のアクションを記録する。
 
 ### 4. サブエージェント呼び出し時の動作
@@ -65,10 +71,13 @@ subagent:
 Task tool:
   subagent_type: status-updater
   prompt: "{{skill_name}}が完了しました。status.mdを更新してください。
+           app_name: {{app_name}}
            完了Skill: {{skill_name}}
            QCスコア: {{score}}（あれば）
            次のアクション: {{next_action}}"
 ```
+
+**注意**: app_name は必須パラメータ。これがないとどのアプリのステータスを更新すべきか判断できない。
 
 ## Resources
 - assets: ./assets/status_template.md

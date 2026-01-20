@@ -40,10 +40,11 @@ description: "デプロイ済みアプリの作成者レビューを実施する
 - 指摘に対し「修正した/しない」と理由を成果物に残す。
 
 ### 4. バックログ反映
-- review_report.mdをFlow/配下に保存する。
+- review_report.mdを`app/{app_name}/docs/`配下に保存する。
 - 改善アクションをユーザーに提示し、対応方針を確認する。
 - ユーザーが改善実施を希望した場合、mini-app-buildに連携する。
 - review_done=true を記録してから次工程へ進む。
+- **status-updater**を呼び出してステータスを更新する。
 
 subagent_policy:
   - 品質ループ（QC/チェック/フィードバック）は必ずサブエージェントへ委譲する

@@ -39,10 +39,11 @@ description: "ミニアプリをVercelにデプロイする。「デプロイ」
 - 指摘に対し「修正した/しない」と理由を成果物に残す。
 
 ### 4. バックログ反映
-- deploy_log.mdをFlow/配下に保存する。
+- deploy_log.mdを`app/{app_name}/docs/`配下に保存する。
 - 公開URLをユーザーに報告する。
 - deploy_done=true を記録。
 - 次アクション（追加タスク、運用開始等）を抽出しバックログへ反映する。
+- **status-updater**を呼び出してステータスを更新する。
 
 subagent_policy:
   - 品質ループ（QC/チェック/フィードバック）は必ずサブエージェントへ委譲する

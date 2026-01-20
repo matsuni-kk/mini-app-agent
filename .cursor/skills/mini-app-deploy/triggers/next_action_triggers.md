@@ -11,9 +11,12 @@
 Task tool:
   subagent_type: status-updater
   prompt: "mini-app-deployが完了しました。status.mdを更新してください。
+           app_name: {{app_name}}
            公開URL: {{public_url}}
            リポジトリ: {{repo_url}}"
 ```
+
+**注意**: app_name は必須パラメータ。アプリごとにステータスを管理する。
 
 ## 起動条件テーブル
 

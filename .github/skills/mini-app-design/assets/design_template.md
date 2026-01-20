@@ -44,9 +44,13 @@
 | Button | {{説明}} | クリックで{{動作}} |
 
 #### レスポンシブ対応
-- Desktop (1024px+): {{レイアウト}}
-- Tablet (768px-1023px): {{レイアウト}}
-- Mobile (-767px): {{レイアウト}}
+| ブレークポイント | 幅 | レイアウト | ガター |
+|------------------|-----|------------|--------|
+| Mobile | ~639px | {{レイアウト}} | 16px |
+| sm | 640px~ | {{レイアウト}} | 24px |
+| md | 768px~ | {{レイアウト}} | 24px |
+| lg | 1024px~ | {{レイアウト}} | 32px |
+| xl | 1280px~ | {{レイアウト}} | 48px |
 
 ## 3. 画面遷移図
 
@@ -73,27 +77,68 @@
   - Primary: 背景色あり、主要アクション用
   - Secondary: 枠線のみ、副次アクション用
   - Disabled: グレーアウト、操作不可時
+- 状態管理:
+  | 状態 | 視覚変化 | トランジション |
+  |------|----------|----------------|
+  | default | ベースカラー | - |
+  | hover | 少し濃く、影を強く | 200ms |
+  | active | さらに濃く、translateY(1px) | 150ms |
+  | focus | フォーカスリング表示 | 200ms |
+  | disabled | 彩度を落とす、cursor: not-allowed | - |
 
 ## 5. ビジュアル設計
 
+> 参照: design_system_principles.md
+
 ### カラースキーム
-| 用途 | カラー | HEX |
-|------|--------|-----|
-| Primary | {{色名}} | #{{hex}} |
-| Secondary | {{色名}} | #{{hex}} |
-| Background | {{色名}} | #{{hex}} |
-| Text | {{色名}} | #{{hex}} |
-| Border | {{色名}} | #{{hex}} |
-| Error | Red | #E53935 |
-| Success | Green | #43A047 |
+
+#### プライマリカラー（HSLベース）
+| レベル | HSL | HEX | 用途 |
+|--------|-----|-----|------|
+| primary-500 | hsl({{H}}, 75%, 50%) | #{{hex}} | ベースカラー |
+| primary-600 | hsl({{H}}, 80%, 42%) | #{{hex}} | hover状態 |
+| primary-700 | hsl({{H}}, 85%, 35%) | #{{hex}} | active状態 |
+
+#### グレースケール
+| レベル | 用途 | HEX |
+|--------|------|-----|
+| gray-50 | 背景（ライト） | #F9FAFB |
+| gray-100 | 背景（セカンダリ） | #F3F4F6 |
+| gray-200 | ボーダー | #E5E7EB |
+| gray-500 | ミュートテキスト | #6B7280 |
+| gray-900 | メインテキスト | #111827 |
+
+#### セマンティックカラー
+| 用途 | カラー | HEX | コントラスト比 |
+|------|--------|-----|----------------|
+| Success | Green | #22C55E | AA準拠 |
+| Warning | Amber | #F59E0B | AA準拠 |
+| Error | Red | #EF4444 | AA準拠 |
+| Info | Blue | #3B82F6 | AA準拠 |
 
 ### タイポグラフィ
-| 要素 | フォント | サイズ | 太さ |
-|------|----------|--------|------|
-| 見出し1 | system-ui | 24px | 700 |
-| 見出し2 | system-ui | 20px | 600 |
-| 本文 | system-ui | 16px | 400 |
-| 補足 | system-ui | 14px | 400 |
+
+#### フォントスタック
+```css
+--font-sans: system-ui, -apple-system, sans-serif;
+```
+
+#### サイズスケール（モジュラースケール 1.25）
+| 要素 | サイズ | line-height | 太さ | 用途 |
+|------|--------|-------------|------|------|
+| h1 | 2.25rem (36px) | 1.25 | 700 | ページタイトル |
+| h2 | 1.875rem (30px) | 1.25 | 700 | セクション見出し |
+| h3 | 1.5rem (24px) | 1.3 | 600 | サブセクション |
+| h4 | 1.25rem (20px) | 1.4 | 600 | 小見出し |
+| body | 1rem (16px) | 1.5 | 400 | 本文 |
+| small | 0.875rem (14px) | 1.5 | 400 | 補足テキスト |
+| caption | 0.75rem (12px) | 1.4 | 400 | キャプション |
+
+#### レスポンシブタイポグラフィ（clamp使用）
+```css
+--font-size-fluid-lg: clamp(1.25rem, 1rem + 1vw, 1.5rem);
+--font-size-fluid-xl: clamp(1.5rem, 1.2rem + 1.5vw, 2rem);
+```
 
 ## 6. 技術設計
 
@@ -132,14 +177,78 @@
 ### CSS設計方針
 - 命名規則: BEM（Block__Element--Modifier）
 - レスポンシブ: モバイルファースト
-- CSS変数使用
+- CSS変数使用（デザイントークン）
+- 8pxグリッドシステム準拠
 
 ```css
 :root {
-    --color-primary: #{{hex}};
-    --color-secondary: #{{hex}};
-    --font-base: 16px;
-    --spacing-unit: 8px;
+    /* ==================
+       Spacing (8px Grid)
+       ================== */
+    --space-unit: 0.5rem; /* 8px */
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+    --space-12: 3rem;     /* 48px */
+
+    /* ==================
+       Colors
+       ================== */
+    --c-primary: #{{hex}};
+    --c-primary-hover: #{{hex}};
+    --c-primary-active: #{{hex}};
+    --c-bg: #F9FAFB;
+    --c-fg: #111827;
+    --c-muted: #6B7280;
+    --c-border: #E5E7EB;
+    --c-success: #22C55E;
+    --c-warning: #F59E0B;
+    --c-error: #EF4444;
+
+    /* ==================
+       Typography
+       ================== */
+    --font-sans: system-ui, -apple-system, sans-serif;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --leading-normal: 1.5;
+    --leading-tight: 1.25;
+
+    /* ==================
+       Effects
+       ================== */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* ==================
+       Motion
+       ================== */
+    --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+    --dur-quick: 150ms;
+    --dur-base: 200ms;
+
+    /* ==================
+       Focus Ring
+       ================== */
+    --ring-color: rgba(59, 130, 246, 0.35);
+    --ring-size: 3px;
+    --ring-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --dur-quick: 1ms;
+        --dur-base: 1ms;
+    }
 }
 ```
 
@@ -150,10 +259,40 @@
 
 ## 7. アクセシビリティ
 
+### 基本要件
 - セマンティックHTML使用
 - alt属性必須
-- フォーカス可視化
-- 十分なコントラスト比（WCAG AA）
+- フォーカス可視化（:focus-visible使用）
+- 十分なコントラスト比（WCAG AA: 4.5:1以上）
+
+### コントラスト比チェックリスト
+| 組み合わせ | 比率 | 判定 |
+|------------|------|------|
+| テキスト / 背景 | {{比率}} | AA/AAA |
+| ボタンテキスト / ボタン背景 | {{比率}} | AA/AAA |
+| リンク / 背景 | {{比率}} | AA/AAA |
+
+### フォーカスリング設計
+```css
+.btn:focus-visible {
+    outline: none;
+    box-shadow:
+        0 0 0 var(--ring-offset) #fff,
+        0 0 0 calc(var(--ring-offset) + var(--ring-size)) var(--ring-color);
+}
+```
+
+### アニメーション配慮
+```css
+@media (prefers-reduced-motion: reduce) {
+    * { transition-duration: 1ms !important; }
+}
+```
+
+### キーボード操作
+- Tab/Shift+Tabで全要素にアクセス可能
+- Enter/Spaceでボタン/リンク操作
+- Escapeでモーダル/ドロップダウン閉じる
 
 ## 変更履歴
 

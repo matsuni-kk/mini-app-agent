@@ -38,10 +38,11 @@ description: "ミニアプリのテストを実施する。「テスト」「動
 - 指摘に対し「修正した/しない」と理由を成果物に残す。
 
 ### 4. バックログ反映
-- test_report.mdをFlow/配下に保存する。
+- test_report.mdを`app/{app_name}/docs/`配下に保存する。
 - 全テストPassなら test_done=true を記録。
 - Failがあればmini-app-buildに戻って修正後、再テスト。
 - 次アクション（追加タスク、修正依頼等）を抽出しバックログへ反映する。
+- **status-updater**を呼び出してステータスを更新する。
 
 subagent_policy:
   - 品質ループ（QC/チェック/フィードバック）は必ずサブエージェントへ委譲する

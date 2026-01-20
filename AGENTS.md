@@ -1,41 +1,166 @@
-# Mini App Agent - Agents Reference
+# Mini App Agent
 
-## Subagents
+HTML/CSS/JavaScriptベースのミニアプリを開発し、Vercelにデプロイするエージェント。
+要件定義からデプロイまで一貫したワークフローを提供。
 
-### qa-mini-app-qc
-- **パス**: `.claude/agents/qa-mini-app-qc.md`
-- **用途**: ミニアプリ開発の全工程における品質保証（QC）
-- **対応Skills**: 全Skills（requirements, design, build, test, deploy）
-- **評価基準**: 各Skillの `evaluation/evaluation_criteria.md`
+## 1. コア原則
 
-## Task Tool Subagent Types
+- 起点Skill確定: ユーザー指定を優先（未指定/曖昧なら質問して確定）
+- WF自動継続: Skill完了後は各Skillの `triggers/next_action_triggers.md` に従い、条件を満たす次Skillを自動実行する
+- テンプレートファースト: 各Skillのassets/を先に読む
+- 品質ループ: Preflight→生成→Subagent QC→反映（最大3回）
+- 推測禁止: 元資料にない項目は「未記載」と明記
+- Vercel対応: 静的ファイルのみ、相対パス使用、プライベートリポジトリからデプロイ
 
-| Type | 用途 |
-|------|------|
-| qa-mini-app-qc | 成果物の品質チェック |
+## 2. ワークフロー
 
-## Subagent Policy
+```
+Phase 1: 準備
+  mini-app-requirements → mini-app-design
 
-```yaml
-subagent_policy:
-  - 品質ループ（QC/チェック/フィードバック）は必ずサブエージェントへ委譲する
-  - サブエージェントの指摘を反映し、反映結果（修正有無/理由）を成果物に残す
+Phase 2: 実装
+  mini-app-build
+
+Phase 3: 検証
+  mini-app-test
+      ↓ Pass → Phase 4
+      ↓ Fail → mini-app-build（修正）
+
+Phase 4: レビュー
+  mini-app-review
+      ↓ 改善なし/スキップ → Phase 5
+      ↓ 改善あり → mini-app-build → mini-app-test → mini-app-review
+
+Phase 5: デプロイ
+  mini-app-deploy
+      ↓ 完了 → 公開URL報告
 ```
 
-## QC判定基準
+### Skills一覧
 
-| 判定 | 条件 |
-|------|------|
-| Pass | 全Criticalチェック項目がPass かつ スコア80点以上 |
-| Conditional Pass | 全Criticalチェック項目がPass かつ スコア60-79点 |
-| Fail | CriticalチェックにFailあり または スコア60点未満 |
+#### 開発ワークフロー
 
-## Skills → Subagent マッピング
+| Skill | 説明 | 主成果物 |
+|-------|------|----------|
+| mini-app-requirements | 要件定義 | requirements.md |
+| mini-app-design | UI/UX設計 | design.md |
+| mini-app-build | コード実装 | index.html, style.css, app.js |
+| mini-app-test | テスト実行 | test_report.md |
+| mini-app-review | 作成者レビュー | review_report.md |
+| mini-app-deploy | Vercelデプロイ | deploy_log.md, 公開URL |
+| mini-app-status | 進捗管理 | status.md |
 
-| Skill | recommended_subagents | QC観点 |
-|-------|----------------------|--------|
-| mini-app-requirements | qa-mini-app-qc | 要件の完全性、曖昧表現排除、実現可能性 |
-| mini-app-design | qa-mini-app-qc | 要件整合性、UI/UXベストプラクティス、実装可能性 |
-| mini-app-build | qa-mini-app-qc | コード品質、設計整合性、GitHub Pages互換性 |
-| mini-app-test | qa-mini-app-qc | テストカバレッジ、テストケース品質、結果妥当性 |
-| mini-app-deploy | qa-mini-app-qc | デプロイ成功確認、公開URL動作、セキュリティ |
+#### セットアップ
+
+| Skill | 説明 | 主成果物 |
+|-------|------|----------|
+| setup-github | GitHub CLIセットアップ | gh認証完了 |
+| setup-vercel | Vercel CLIセットアップ | vercel認証完了 |
+
+#### リサーチ・ユーティリティ
+
+| Skill | 説明 | 主成果物 |
+|-------|------|----------|
+| web-research | Web検索による情報検証 | 検索結果サマリー |
+| core-rule-maintenance | CLAUDE.md/AGENTS.md保守 | 更新済みCLAUDE.md |
+
+## 3. 品質ゴール
+
+- 欠損ゼロ: 要件の可視情報を漏れなく反映
+- 行間ゼロ: 初見でも前提・背景から理解できる自己完結
+- ハルシネーションゼロ: 元資料にない項目は「未記載/不明」
+- Vercel互換: 静的サイト制約を遵守
+
+## 4. パス辞書
+
+```yaml
+root: "."
+
+dirs:
+  flow: "Flow"
+  stock: "Stock"
+  skills: ".claude/skills"
+  agents: ".claude/agents"
+  app: "app"
+
+patterns:
+  # アプリごとのドキュメント（{app_name}はアプリ識別子）
+  requirements: "app/{app_name}/docs/requirements.md"
+  design: "app/{app_name}/docs/design.md"
+  test_report: "app/{app_name}/docs/test_report.md"
+  review_report: "app/{app_name}/docs/review_report.md"
+  deploy_log: "app/{app_name}/docs/deploy_log.md"
+  status: "app/{app_name}/status.md"
+
+  # アプリのコード
+  app_dir: "app/{app_name}/"
+  app_index: "app/{app_name}/index.html"
+  app_css: "app/{app_name}/css/style.css"
+  app_js: "app/{app_name}/js/app.js"
+```
+
+## 5. 技術制約
+
+### Vercel要件
+- index.htmlをルートに配置
+- 相対パスのみ使用（`./`, `../`）
+- 静的ファイルのみ（サーバーサイド処理なし）
+- 外部リソースはCDN経由
+- リポジトリはPrivate（プライベート）で作成
+
+### コーディング規約
+- HTML: セマンティックタグ、アクセシビリティ考慮
+- CSS: BEM命名、モバイルファースト、CSS変数
+- JS: ES6+、エラーハンドリング必須
+
+## 6. QC
+
+全SkillでQC Subagent（`qa-mini-app-qc`）による品質チェックを実施。
+評価基準は各Skillの `evaluation/evaluation_criteria.md` に定義。
+
+## 7. 進捗管理
+
+### アプリ単位の進捗管理
+**各アプリは独立したstatus.mdを持ち、進捗を個別に追跡する。**
+
+```
+app/{app_name}/
+├── status.md          # アプリ固有のステータス
+├── docs/
+│   ├── requirements.md
+│   ├── design.md
+│   ├── test_report.md
+│   ├── review_report.md
+│   └── deploy_log.md
+├── index.html
+├── css/
+└── js/
+```
+
+### 自動ステータス更新
+**各Skill完了時、次Skillへ進む前にstatus-updaterサブエージェントを呼び出す。**
+
+```yaml
+subagent:
+  name: status-updater
+  path: .claude/agents/status-updater.md
+  trigger: 各Skill完了時
+  action: app/{app_name}/status.mdを更新
+```
+
+### 更新内容
+- 完了フェーズのステータスを更新
+- QCスコアを記録
+- 次のアクションを更新
+- 全体進捗率を再計算
+- 履歴にマイルストーンを追加
+
+### status.mdの構成
+- フェーズ進捗表（各フェーズの完了状況）
+- 成果物一覧（ドキュメント・コードの存在確認）
+- 品質サマリー（QCスコア推移）
+- デプロイ情報（公開URL、リポジトリ）
+- 次のアクション
+
+---
+Do what has been asked; nothing more, nothing less.

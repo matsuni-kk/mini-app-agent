@@ -1,12 +1,15 @@
 # Status Updater Subagent
 
-各Skill完了時にstatus.mdを自動更新するサブエージェント。
+各Skill完了時に**アプリごとの**status.mdを自動更新するサブエージェント。
 
 ## 役割
 - 各フェーズの完了状況を追跡
 - 成果物の存在・更新状況を確認
 - QCスコアを記録
 - 次のアクションを提示
+
+## 必須パラメータ
+- **app_name**: 更新対象のアプリ識別子（必須）
 
 ## 起動タイミング
 **全Skillの完了時に自動起動する。**
@@ -17,17 +20,19 @@
 
 ### 1. 情報収集
 ```bash
-# Flow/配下のドキュメント確認
-ls -la Flow/
+# アプリのドキュメント確認
+ls -la app/{app_name}/docs/
 
-# app/配下のソースコード確認
-ls -la app/*/
+# アプリのソースコード確認
+ls -la app/{app_name}/
 
 # GitHubリポジトリ確認（存在する場合）
 gh repo view --json name,url 2>/dev/null
 ```
 
 ### 2. status.md更新
+**更新対象**: `app/{app_name}/status.md`
+
 以下の情報を更新する：
 
 ```yaml
@@ -72,8 +77,12 @@ update_fields:
 ```
 Task tool:
   subagent_type: status-updater
-  prompt: "{{skill_name}}が完了しました。status.mdを更新してください。"
+  prompt: "{{skill_name}}が完了しました。status.mdを更新してください。
+           app_name: {{app_name}}
+           QCスコア: {{score}}（あれば）"
 ```
+
+**注意**: app_name は必須。これがないとどのアプリのステータスを更新すべきか判断できない。
 
 ## 出力形式
 
@@ -82,8 +91,10 @@ Task tool:
 ```markdown
 ## Status Updated
 
+- アプリ: {{app_name}}
 - 更新日時: {{timestamp}}
 - 更新内容: {{skill_name}}の完了を記録
 - 現在の進捗: {{progress}}%
+- ステータスファイル: app/{{app_name}}/status.md
 - 次のアクション: {{next_action}}
 ```

@@ -29,11 +29,11 @@
 
 | ファイル | パス | ステータス | 最終更新 |
 |----------|------|-----------|----------|
-| 要件定義書 | Flow/requirements.md | {{status}} | {{date}} |
-| 設計書 | Flow/design.md | {{status}} | {{date}} |
-| テストレポート | Flow/test_report.md | {{status}} | {{date}} |
-| レビューレポート | Flow/review_report.md | {{status}} | {{date}} |
-| デプロイログ | Flow/deploy_log.md | {{status}} | {{date}} |
+| 要件定義書 | app/{{app_name}}/docs/requirements.md | {{status}} | {{date}} |
+| 設計書 | app/{{app_name}}/docs/design.md | {{status}} | {{date}} |
+| テストレポート | app/{{app_name}}/docs/test_report.md | {{status}} | {{date}} |
+| レビューレポート | app/{{app_name}}/docs/review_report.md | {{status}} | {{date}} |
+| デプロイログ | app/{{app_name}}/docs/deploy_log.md | {{status}} | {{date}} |
 
 ### ソースコード
 

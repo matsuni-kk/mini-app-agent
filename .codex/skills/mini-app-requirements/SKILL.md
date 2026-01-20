@@ -37,9 +37,10 @@ description: "ミニアプリの要件定義を実施する。「要件定義」
 - 指摘に対し「修正した/しない」と理由を成果物に残す。
 
 ### 4. バックログ反映
-- requirements.mdをFlow/配下に保存する。
+- requirements.mdを`app/{app_name}/docs/`配下に保存する。
 - 次アクション（追加タスク、レビュー依頼等）を抽出しバックログへ反映する。
 - requirements_done=true を記録してから次工程へ進む。
+- **status-updater**を呼び出してステータスを更新する。
 
 subagent_policy:
   - 品質ループ（QC/チェック/フィードバック）は必ずサブエージェントへ委譲する

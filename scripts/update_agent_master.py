@@ -2542,12 +2542,26 @@ def sync_skills_and_commands(project_root: Path, source_platform: str):
         flat_copy=True,
     )
 
-    # opencode 同期: .claude/agents → .opencode/agent, .claude/commands → .opencode/command
-    # opencode は skills ではなく agents（Subagent定義）を同期する
+    # opencode 同期: skills/agents/commands を更新
+    # - skills   : 起点skills → .opencode/skills
+    # - agents   : .claude/agents → .opencode/agent（Subagent定義）
+    # - commands : .claude/commands → .opencode/command
     claude_agents_dir = project_root / ".claude" / "agents"
     claude_commands_dir = project_root / ".claude" / "commands"
+    opencode_skills_dir = project_root / ".opencode" / "skills"
     opencode_agent_dir = project_root / ".opencode" / "agent"
     opencode_command_dir = project_root / ".opencode" / "command"
+
+    # 起点skills → .opencode/skills
+    if source_dirs["skills"].exists():
+        _sync_directory(
+            source_dir=source_dirs["skills"],
+            targets=[opencode_skills_dir],
+            target_names=[".opencode/skills"],
+            target_envs=["opencode"],
+            source_name=f".{platform}/skills",
+            project_root=project_root,
+        )
 
     # .claude/agents → .opencode/agent
     if claude_agents_dir.exists():

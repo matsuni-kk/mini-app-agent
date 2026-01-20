@@ -38,6 +38,8 @@ Phase 5: デプロイ
 
 ### Skills一覧
 
+#### 開発ワークフロー
+
 | Skill | 説明 | 主成果物 |
 |-------|------|----------|
 | mini-app-requirements | 要件定義 | requirements.md |
@@ -47,8 +49,18 @@ Phase 5: デプロイ
 | mini-app-review | 作成者レビュー | review_report.md |
 | mini-app-deploy | Vercelデプロイ | deploy_log.md, 公開URL |
 | mini-app-status | 進捗管理 | status.md |
+
+#### セットアップ
+
+| Skill | 説明 | 主成果物 |
+|-------|------|----------|
 | setup-github | GitHub CLIセットアップ | gh認証完了 |
 | setup-vercel | Vercel CLIセットアップ | vercel認証完了 |
+
+#### リサーチ・ユーティリティ
+
+| Skill | 説明 | 主成果物 |
+|-------|------|----------|
 | web-research | Web検索による情報検証 | 検索結果サマリー |
 | core-rule-maintenance | CLAUDE.md/AGENTS.md保守 | 更新済みCLAUDE.md |
 
@@ -72,13 +84,15 @@ dirs:
   app: "app"
 
 patterns:
-  requirements: "Flow/requirements.md"
-  design: "Flow/design.md"
-  test_report: "Flow/test_report.md"
-  review_report: "Flow/review_report.md"
-  deploy_log: "Flow/deploy_log.md"
-  status: "Flow/status.md"
-  # アプリは app/{app_name}/ 配下に配置
+  # アプリごとのドキュメント（{app_name}はアプリ識別子）
+  requirements: "app/{app_name}/docs/requirements.md"
+  design: "app/{app_name}/docs/design.md"
+  test_report: "app/{app_name}/docs/test_report.md"
+  review_report: "app/{app_name}/docs/review_report.md"
+  deploy_log: "app/{app_name}/docs/deploy_log.md"
+  status: "app/{app_name}/status.md"
+
+  # アプリのコード
   app_dir: "app/{app_name}/"
   app_index: "app/{app_name}/index.html"
   app_css: "app/{app_name}/css/style.css"
@@ -106,6 +120,23 @@ patterns:
 
 ## 7. 進捗管理
 
+### アプリ単位の進捗管理
+**各アプリは独立したstatus.mdを持ち、進捗を個別に追跡する。**
+
+```
+app/{app_name}/
+├── status.md          # アプリ固有のステータス
+├── docs/
+│   ├── requirements.md
+│   ├── design.md
+│   ├── test_report.md
+│   ├── review_report.md
+│   └── deploy_log.md
+├── index.html
+├── css/
+└── js/
+```
+
 ### 自動ステータス更新
 **各Skill完了時、次Skillへ進む前にstatus-updaterサブエージェントを呼び出す。**
 
@@ -114,7 +145,7 @@ subagent:
   name: status-updater
   path: .claude/agents/status-updater.md
   trigger: 各Skill完了時
-  action: Flow/status.mdを更新
+  action: app/{app_name}/status.mdを更新
 ```
 
 ### 更新内容
