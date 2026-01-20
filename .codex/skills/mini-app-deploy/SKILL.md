@@ -51,6 +51,7 @@ subagent_policy:
 
 recommended_subagents:
   - qa-mini-app-qc: デプロイ成功確認、公開URL動作、セキュリティ設定を検査
+  - deployer: GitHubリポジトリ作成、Vercelデプロイ実行、動作確認
 
 ## Resources
 - questions: ./questions/deploy_questions.md

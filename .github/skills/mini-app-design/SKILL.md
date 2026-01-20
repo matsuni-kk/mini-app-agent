@@ -49,6 +49,7 @@ subagent_policy:
 
 recommended_subagents:
   - qa-mini-app-qc: 要件との整合性、UI/UXベストプラクティス、実装可能性を検査
+  - web-researcher: UIライブラリ、デザインパターン、アクセシビリティ基準の調査
 
 ## Resources
 - questions: ./questions/design_questions.md

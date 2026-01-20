@@ -118,10 +118,19 @@ patterns:
 - CSS: BEM命名、モバイルファースト、CSS変数
 - JS: ES6+、エラーハンドリング必須
 
-## 6. QC
+## 6. QC・サブエージェント
 
-全SkillでQC Subagent（`qa-mini-app-qc`）による品質チェックを実施。
+全SkillでSubagentによる品質チェック・自動処理を実施。
 評価基準は各Skillの `evaluation/evaluation_criteria.md` に定義。
+
+### サブエージェント一覧
+
+| サブエージェント | 説明 | 適用Skill |
+|-----------------|------|-----------|
+| qa-mini-app-qc | 品質チェック・評価 | 全Skill |
+| status-updater | ステータス自動更新 | 全Skill |
+| web-researcher | 技術情報の検証・調査 | requirements, design, build, test, deploy |
+| deployer | Vercelデプロイ実行 | deploy |
 
 ## 7. 進捗管理
 

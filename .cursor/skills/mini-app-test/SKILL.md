@@ -50,6 +50,7 @@ subagent_policy:
 
 recommended_subagents:
   - qa-mini-app-qc: テストカバレッジ、テストケース品質、結果の妥当性を検査
+  - web-researcher: テスト手法、ブラウザ互換性情報の調査
 
 ## Resources
 - questions: ./questions/test_questions.md

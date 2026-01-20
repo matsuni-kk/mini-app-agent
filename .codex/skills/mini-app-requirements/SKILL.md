@@ -48,6 +48,7 @@ subagent_policy:
 
 recommended_subagents:
   - qa-mini-app-qc: 要件の完全性、曖昧表現排除、実現可能性を検査
+  - web-researcher: 技術要件の実現可能性、外部サービス仕様の確認
 
 ## Resources
 - questions: ./questions/requirements_questions.md

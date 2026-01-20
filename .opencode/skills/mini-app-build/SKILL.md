@@ -49,7 +49,8 @@ subagent_policy:
   - サブエージェントの指摘を反映し、反映結果（修正有無/理由）を成果物に残す
 
 recommended_subagents:
-  - qa-mini-app-qc: コード品質、設計整合性、GitHub Pages互換性を検査
+  - qa-mini-app-qc: コード品質、設計整合性、Vercel互換性を検査
+  - web-researcher: API仕様、ライブラリ使用方法、実装パターンの調査
 
 ## Resources
 - questions: ./questions/build_questions.md
