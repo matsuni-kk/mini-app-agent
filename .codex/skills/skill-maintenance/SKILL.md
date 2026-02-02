@@ -54,11 +54,14 @@ description: "Skill（SKILL.md）の保守・更新・新規作成を対話で�
       - Cursor: `.cursor`
       - Claude Code: `.claude`
       - Codex: `.codex`
-    - evaluationフォルダは以下の3ファイル構成とする:
-      - `evaluation_guide.md`: 評価レベル定義（Most/More/Good）・採点基準・QC報告フォーマット・使い方
-      - `most_criteria.md`: 必須修正項目（致命的欠損）
-      - `more_criteria.md`: 推奨修正項目（品質向上）+ Good（保持項目）
-    - evaluation_guide.md は他Skillと共通の内容を含み、most/moreはSkill固有の具体項目を含む。
+    - evaluationフォルダは以下の構成とする:
+      - `evaluation_guide.md`: 評価レベル定義（Most/More/Good）・採点基準・QC報告フォーマット・**観点別ファイル一覧**
+      - **観点別ファイル**（標準仕様）:
+        - Most（Pass/Fail判定）: `{observation}_most.md`（例: `structure_most.md`, `ai_detection_most.md`）
+        - More（スコアリング）: `{observation}_more.md`（例: `human_likeness_more.md`）
+      - レガシー（観点が少ないSkill向け）: `most_criteria.md`, `more_criteria.md`
+    - **観点別並列実行が標準**: QC実行時、`qa-skill-qc`が観点数だけ並列実行される
+    - evaluation_guide.md に観点別ファイル一覧を明記し、どの観点で並列実行するかを定義する
     - SKILL.md の Resources セクションに全アセットを明記する。
 4. Subagentとして独立実行されるSkillの場合:
    - `## Subagent Execution` セクションをSKILL.md末尾に追加し、以下を明記する:

@@ -21,7 +21,7 @@ import platform
 import argparse
 from pathlib import Path
 from datetime import datetime
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Optional
 
 def replace_path_reference(content: str, target: str) -> str:
     """
@@ -192,16 +192,19 @@ def sync_skills_group(
 
 def sync_embedded_skill_scripts(
     project_root: Path,
+    origin_env: str,
     dry_run: bool = False,
-    envs: list[str] | None = None,
+    envs: Optional[list[str]] = None,
 ) -> bool:
     """
-    scripts/ と commons_scripts/ を大元（single source of truth）として、
-    skills配下に埋め込まれた scripts/ の同名ファイルを更新する。
+    起点環境のskills/*/scripts/* を scripts/ へ集約し、その後 scripts/ → 他環境へ配布する。
 
-    - 対象: .{claude,codex,cursor}/skills/*/scripts/*
-    - ルール: ファイル名（basename）が一致する場合のみ上書き（新規作成はしない）
+    フロー:
+    1. .{origin_env}/skills/*/scripts/* → scripts/ (起点から集約)
+    2. scripts/ + commons_scripts/ → .{全env}/skills/*/scripts/* (全環境へ配布)
+
     - 優先順位: scripts/ > commons_scripts/
+    - ルール: ファイル名（basename）が一致する場合のみ上書き（新規作成はしない）
     """
     import shutil
 
@@ -209,8 +212,42 @@ def sync_embedded_skill_scripts(
     root_common_scripts_dir = project_root / "commons_scripts"
 
     if envs is None:
-        envs = ["claude", "codex", "cursor"]
+        envs = ["claude", "codex", "cursor", "opencode"]
 
+    # ========================================
+    # Phase 1: 起点env → scripts/ への集約
+    # ========================================
+    origin_skills_dir = project_root / f".{origin_env}" / "skills"
+    collected = 0
+
+    if origin_skills_dir.exists():
+        root_scripts_dir.mkdir(parents=True, exist_ok=True)
+
+        for embedded in origin_skills_dir.glob("*/scripts/*"):
+            if not embedded.is_file():
+                continue
+            if embedded.name.startswith("."):
+                continue
+
+            dest = root_scripts_dir / embedded.name
+
+            if dry_run:
+                print(f"🔍 [DRY-RUN] 起点スクリプト集約予定: {embedded.name} ({origin_env} → scripts/)")
+                collected += 1
+                continue
+
+            try:
+                shutil.copy2(embedded, dest)
+                collected += 1
+            except Exception as e:
+                print(f"⚠️  起点スクリプト集約エラー: {embedded.name} ({e})")
+
+    if collected > 0:
+        print(f"📥 起点スクリプト集約: {collected}個 (.{origin_env}/skills/*/scripts/ → scripts/)")
+
+    # ========================================
+    # Phase 2: scripts/ → 全env への配布
+    # ========================================
     sources_by_name = {}
     conflict_names = set()
 
@@ -233,8 +270,7 @@ def sync_embedded_skill_scripts(
     index_sources(root_common_scripts_dir, "commons_scripts")
 
     if conflict_names:
-        # 競合時は scripts/ を優先しつつ、警告を出す（自動で別名解決はしない）
-        print(f"⚠️  埋め込みスクリプト同期: 同名競合が検出されました（scripts優先）: {sorted(conflict_names)}")
+        print(f"⚠️  埋め込みスクリプト配布: 同名競合が検出されました（scripts優先）: {sorted(conflict_names)}")
 
     updated = 0
     skipped = 0
@@ -253,7 +289,7 @@ def sync_embedded_skill_scripts(
             source_path, source_label = source_entry
 
             if dry_run:
-                print(f"🔍 [DRY-RUN] 埋め込みスクリプト更新予定: {embedded} <= {source_label}/{source_path.name}")
+                print(f"🔍 [DRY-RUN] 埋め込みスクリプト配布予定: {embedded} <= {source_label}/{source_path.name}")
                 updated += 1
                 continue
 
@@ -262,17 +298,17 @@ def sync_embedded_skill_scripts(
                 shutil.copy2(source_path, embedded)
                 updated += 1
             except PermissionError as e:
-                print(f"⚠️  埋め込みスクリプト同期: 権限不足でスキップ: {embedded} ({e})")
+                print(f"⚠️  埋め込みスクリプト配布: 権限不足でスキップ: {embedded} ({e})")
                 skipped += 1
             except OSError as e:
-                print(f"⚠️  埋め込みスクリプト同期: 書き込み失敗でスキップ: {embedded} ({e})")
+                print(f"⚠️  埋め込みスクリプト配布: 書き込み失敗でスキップ: {embedded} ({e})")
                 skipped += 1
 
     if updated == 0 and skipped == 0:
-        print("ℹ️  埋め込みスクリプト同期: 対象が見つかりませんでした")
+        print("ℹ️  埋め込みスクリプト配布: 対象が見つかりませんでした")
         return True
 
-    print(f"🧩 埋め込みスクリプト同期完了: 更新={updated} / 対象外={skipped}")
+    print(f"📤 埋め込みスクリプト配布: 更新={updated} / 対象外={skipped} (scripts/ → .{{env}}/skills/*/scripts/)")
     return True
 
 def remove_empty_directories(project_root: Path, target_dir: Path, dry_run: bool = False) -> int:
@@ -1845,7 +1881,7 @@ def split_sections_by_type(sections: Dict[str, Dict]) -> Dict[str, Dict[str, str
 
 def build_skill_md(skill_name: str, description: str, sections: Dict[str, str], target_env: str = "claude",
                    has_questions: bool = False, has_templates: bool = False, has_scripts: bool = False,
-                   question_files: list = None, template_files: list = None, script_files: list = None) -> str:
+                   question_files: Optional[list] = None, template_files: Optional[list] = None, script_files: Optional[list] = None) -> str:
     """
     SKILL.md ファイルの内容を構築
 
@@ -1968,7 +2004,7 @@ def build_single_template_md(skill_name: str, template_name: str, content: str) 
 def create_skills_from_mdc(
     project_root: Path,
     dry_run: bool = False,
-    target_rule: str = None,
+    target_rule: Optional[str] = None,
     preserve_content: bool = True,
 ) -> bool:
     """
@@ -2266,7 +2302,7 @@ def update_master_files_only(
     project_root: Path,
     dry_run: bool = False,
     preserve_content: bool = True,
-    preferred_source_name: str | None = None,
+    preferred_source_name: Optional[str] = None,
     sync_after_master: bool = True,
 ) -> bool:
     """
@@ -2289,7 +2325,7 @@ def update_master_files_only(
         "copilot-instructions.md": project_root / ".github" / "copilot-instructions.md",
     }
 
-    def _pick_master_source(preferred: str | None = None) -> tuple[Path | None, str | None]:
+    def _pick_master_source(preferred: Optional[str] = None) -> Tuple[Optional[Path], Optional[str]]:
         """
         マスター起点を決める。
         - preferred が指定され、存在すればそれを優先
